@@ -613,3 +613,18 @@ This repository contains the following GitHub CI workflows:
 
 
 [multi-tenancy lockdown]: https://fluxcd.io/flux/installation/configuration/multitenancy/
+
+## Short Hand
+sudo snap install microk8s --classic
+microk8s status --wait-ready
+microk8s enable dns && microk8s enable storage && microk8s enable helm3 && microk8s enable ingress && microk8s enable rbac
+export KUBECONFIG=/var/snap/microk8s/current/credentials/client.config
+alias k='microk8s kubectl' && alias kubectl='microk8s kubectl'
+sudo usermod -a -G microk8s corey
+sudo chown -R corey ~/.kube
+
+export GITHUB_USER=coreyperkins
+export GITHUB_REPO=coreyperkins/flux2-multi-tenancy-2
+flux check --pre
+flux bootstrap github --context=microk8s --owner=${GITHUB_USER} --repository=${GITHUB_REPO} --branch=main --personal --path=clusters/staging
+flux get kustomizations --watch
